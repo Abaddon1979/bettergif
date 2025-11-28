@@ -279,7 +279,8 @@ export default {
           const foundUrls = (current.match(urlRegex) || []).filter(isImageUrl);
           const all = Array.from(new Set([...(hidden ? [hidden] : []), ...foundUrls]));
 
-          let textOnly = current.replace(urlRegex, "").replace(/\s{2,}/g, " ").trim();
+          // Remove zero-width spaces that were added to prevent "Message can't be blank" error
+          let textOnly = current.replace(urlRegex, "").replace(/\u200B/g, "").replace(/\s{2,}/g, " ").trim();
 
           const parts = [];
           if (textOnly) parts.push(textOnly);
@@ -554,7 +555,9 @@ export default {
                         if (currentValue && !currentValue.endsWith("\n")) {
                           textarea.value = currentValue + "\n";
                         } else if (!currentValue) {
-                          textarea.value = "\n";
+                          // Use a zero-width space to prevent "Message can't be blank" error
+                          // This will be replaced with the actual GIF URL when sending
+                          textarea.value = "\u200B";
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
