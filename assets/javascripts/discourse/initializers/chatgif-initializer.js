@@ -453,6 +453,29 @@ export default {
               // Let the click proceed - Discourse will send the message
             }
           }, { capture: true });
+
+          // Handle touch event for mobile
+          sendBtn.addEventListener("touchend", (e) => {
+            if (inputEl.dataset.chatgifHiddenUrl) {
+              const hidden = inputEl.dataset.chatgifHiddenUrl;
+              const urlRegex = /(https?:\/\/[^\s]+)/g;
+              const isImageUrl = (u) => /\.(gif|png|jpe?g|webp)(\?.*)?$/i.test(u);
+
+              const current = inputEl.value || "";
+              const foundUrls = (current.match(urlRegex) || []).filter(isImageUrl);
+              const all = Array.from(new Set([...(hidden ? [hidden] : []), ...foundUrls]));
+
+              let textOnly = current.replace(urlRegex, "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
+
+              const parts = [];
+              if (textOnly) parts.push(textOnly);
+              all.forEach(url => parts.push(url));
+
+              inputEl.value = parts.join("\n");
+              inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+              delete inputEl.dataset.chatgifHiddenUrl;
+            }
+          }, { capture: true });
         }
 
         updatePreview();
