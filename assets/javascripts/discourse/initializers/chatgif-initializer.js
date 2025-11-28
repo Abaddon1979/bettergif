@@ -241,13 +241,14 @@ export default {
 
           if (urls[0] && value.includes(urls[0]) && inputEl.dataset.chatgifHiddenUrl !== urls[0]) {
             inputEl.dataset.chatgifHiddenUrl = urls[0];
-            let textOnly = value.replace(urls[0], "").replace(/\s{2,}/g, " ").trim();
+            // Remove URL and invisible characters
+            let textOnly = value.replace(urls[0], "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
 
             if (textOnly && !textOnly.endsWith("\n")) {
               textOnly = textOnly + "\n";
             } else if (!textOnly) {
-              // Use a space to prevent blank message error
-              textOnly = " ";
+              // Use space + invisible character to prevent blank message error
+              textOnly = " \u200E";
             }
             inputEl.value = textOnly;
           }
@@ -560,8 +561,8 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Use a single space to pass validation (URL will be sent from dataset)
-                          textarea.value = " ";
+                          // Use space + invisible character to pass validation
+                          textarea.value = " \u200E";
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -755,8 +756,8 @@ export default {
                               chatTextarea.value = currentValue + "\n";
                             }
                           } else {
-                            // Use a single space to pass validation (URL will be sent from dataset)
-                            chatTextarea.value = " ";
+                            // Use space + invisible character to pass validation
+                            chatTextarea.value = " \u200E";
                           }
 
                           chatTextarea.dispatchEvent(new Event("input", { bubbles: true }));
