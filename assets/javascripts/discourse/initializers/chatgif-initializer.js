@@ -423,12 +423,34 @@ export default {
           }
 
           sendBtn.addEventListener("click", (e) => {
-            // If we have a hidden URL, use the same logic as Enter key
+            // If we have a hidden URL, set value before Discourse processes the click
             if (inputEl.dataset.chatgifHiddenUrl) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              appendHiddenUrlBeforeSend({ triggerSendClick: true });
+              const hidden = inputEl.dataset.chatgifHiddenUrl;
+              const urlRegex = /(https?:\/\/[^\s]+)/g;
+              const isImageUrl = (u) => /\.(gif|png|jpe?g|webp)(\?.*)?$/i.test(u);
+
+              const current = inputEl.value || "";
+              const foundUrls = (current.match(urlRegex) || []).filter(isImageUrl);
+              const all = Array.from(new Set([...(hidden ? [hidden] : []), ...foundUrls]));
+
+              // Remove URLs and invisible characters
+              let textOnly = current.replace(urlRegex, "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
+
+              const parts = [];
+              if (textOnly) parts.push(textOnly);
+              all.forEach(url => parts.push(url));
+              const combinedValue = parts.join("\n");
+
+              // Set value synchronously - Discourse's handler will see this
+              inputEl.value = combinedValue;
+
+              // Dispatch input event so Discourse updates
+              inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+
+              // Clear dataset
+              delete inputEl.dataset.chatgifHiddenUrl;
+
+              // Let the click proceed - Discourse will send the message
             }
           }, { capture: true });
         }
