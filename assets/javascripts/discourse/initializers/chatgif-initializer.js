@@ -408,7 +408,15 @@ export default {
         const sendBtn = composerRoot?.querySelector(".chat-composer-button.-send");
         if (sendBtn && !sendBtn.dataset.chatgifHooked) {
           sendBtn.dataset.chatgifHooked = "true";
-          sendBtn.addEventListener("mousedown", () => appendHiddenUrlBeforeSend({ triggerSendClick: false }));
+          sendBtn.addEventListener("click", (e) => {
+            // If we have a hidden URL, intercept and handle the send ourselves
+            if (inputEl.dataset.chatgifHiddenUrl) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              appendHiddenUrlBeforeSend({ triggerSendClick: true });
+            }
+          }, { capture: true }); // Capture phase - runs before Discourse's handler
         }
 
         updatePreview();
