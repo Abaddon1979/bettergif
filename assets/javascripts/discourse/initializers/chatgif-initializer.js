@@ -371,10 +371,16 @@ export default {
             if (!e.shiftKey && !e.isComposing) {
               const current = inputEl.value || "";
               const urls = (current.match(urlRegex) || []).filter(isImageUrl);
-              if (inputEl.dataset.chatgifHiddenUrl || urls.length) {
+              // Also trigger if we have the placeholder (space + invisible char) with a hidden URL
+              const hasPlaceholder = /^\s*\u200E\s*$/.test(current);
+              if (inputEl.dataset.chatgifHiddenUrl || urls.length || (hasPlaceholder && inputEl.dataset.chatgifHiddenUrl)) {
                 if (inputEl.dataset.chatgifSendingNow === "1") return;
+
+                // Prevent ALL enter processing
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
+
                 inputEl.dataset.chatgifSuppressEnter = "1";
                 appendHiddenUrlBeforeSend({ triggerSendClick: true, triggerKeyEnter: false });
                 return;
@@ -387,12 +393,14 @@ export default {
           if (e.key === "Enter" && inputEl.dataset.chatgifSuppressEnter === "1") {
             e.preventDefault();
             e.stopPropagation();
+            e.stopImmediatePropagation();
           }
         });
         inputEl.addEventListener("keypress", (e) => {
           if (e.key === "Enter" && inputEl.dataset.chatgifSuppressEnter === "1") {
             e.preventDefault();
             e.stopPropagation();
+            e.stopImmediatePropagation();
           }
         });
 
