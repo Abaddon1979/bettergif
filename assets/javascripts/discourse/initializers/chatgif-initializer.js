@@ -242,12 +242,16 @@ export default {
           if (urls[0] && value.includes(urls[0]) && inputEl.dataset.chatgifHiddenUrl !== urls[0]) {
             inputEl.dataset.chatgifHiddenUrl = urls[0];
             let textOnly = value.replace(urls[0], "").replace(/\s{2,}/g, " ").trim();
-            if (textOnly && !textOnly.endsWith("\n")) {
-              textOnly = textOnly + "\n";
-            } else if (!textOnly) {
-              textOnly = "\n";
+
+            // Only hide the URL if there's actual text content
+            // If there's no text, keep the URL visible to pass Discourse validation
+            if (textOnly) {
+              if (!textOnly.endsWith("\n")) {
+                textOnly = textOnly + "\n";
+              }
+              inputEl.value = textOnly;
             }
-            inputEl.value = textOnly;
+            // If textOnly is empty, don't modify inputEl.value - keep the URL visible
           }
 
           const img = document.createElement("img");
@@ -279,8 +283,7 @@ export default {
           const foundUrls = (current.match(urlRegex) || []).filter(isImageUrl);
           const all = Array.from(new Set([...(hidden ? [hidden] : []), ...foundUrls]));
 
-          // Remove zero-width spaces that were added to prevent "Message can't be blank" error
-          let textOnly = current.replace(urlRegex, "").replace(/\u200B/g, "").replace(/\s{2,}/g, " ").trim();
+          let textOnly = current.replace(urlRegex, "").replace(/\s{2,}/g, " ").trim();
 
           const parts = [];
           if (textOnly) parts.push(textOnly);
@@ -550,20 +553,27 @@ export default {
                         const gifUrl = gif.media_formats.gif.url;
                         const currentValue = textarea.value || "";
 
+                        // Store in dataset for tracking
                         textarea.dataset.chatgifHiddenUrl = gifUrl;
 
-                        if (currentValue && !currentValue.endsWith("\n")) {
-                          textarea.value = currentValue + "\n";
-                        } else if (!currentValue) {
-                          // Use a zero-width space to prevent "Message can't be blank" error
-                          // This will be replaced with the actual GIF URL when sending
-                          textarea.value = "\u200B";
+                        // If there's existing text, append the URL on a new line
+                        // If no text, just put the URL directly (it will be hidden after posting)
+                        if (currentValue.trim()) {
+                          if (!currentValue.endsWith("\n")) {
+                            textarea.value = currentValue + "\n" + gifUrl;
+                          } else {
+                            textarea.value = currentValue + gifUrl;
+                          }
+                        } else {
+                          // No text, just the GIF URL - this will pass validation
+                          // and be hidden by processChatForDuplicateLinkPreviews after posting
+                          textarea.value = gifUrl;
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
                         textarea.focus();
 
-                        const textLength = textarea.value.trimEnd().length;
+                        const textLength = textarea.value.length;
                         textarea.setSelectionRange(textLength, textLength);
                       }
                       gifPicker.style.display = "none";
