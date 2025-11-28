@@ -243,15 +243,13 @@ export default {
             inputEl.dataset.chatgifHiddenUrl = urls[0];
             let textOnly = value.replace(urls[0], "").replace(/\s{2,}/g, " ").trim();
 
-            // Only hide the URL if there's actual text content
-            // If there's no text, keep the URL visible to pass Discourse validation
-            if (textOnly) {
-              if (!textOnly.endsWith("\n")) {
-                textOnly = textOnly + "\n";
-              }
-              inputEl.value = textOnly;
+            if (textOnly && !textOnly.endsWith("\n")) {
+              textOnly = textOnly + "\n";
+            } else if (!textOnly) {
+              // Use a space to prevent blank message error
+              textOnly = " ";
             }
-            // If textOnly is empty, don't modify inputEl.value - keep the URL visible
+            inputEl.value = textOnly;
           }
 
           const img = document.createElement("img");
@@ -553,26 +551,23 @@ export default {
                         const gifUrl = gif.media_formats.gif.url;
                         const currentValue = textarea.value || "";
 
-                        // Store in dataset for tracking
+                        // Store the GIF URL in dataset
                         textarea.dataset.chatgifHiddenUrl = gifUrl;
 
-                        // If there's existing text, append the URL on a new line
-                        // If no text, just put the URL directly (it will be hidden after posting)
+                        // If there's existing text, just add a space/newline
                         if (currentValue.trim()) {
                           if (!currentValue.endsWith("\n")) {
-                            textarea.value = currentValue + "\n" + gifUrl;
-                          } else {
-                            textarea.value = currentValue + gifUrl;
+                            textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // No text, just the GIF URL - this will pass validation
-                          // and be hidden by processChatForDuplicateLinkPreviews after posting
-                          textarea.value = gifUrl;
+                          // Use a single space to pass validation (will be replaced on send)
+                          textarea.value = " ";
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
                         textarea.focus();
 
+                        // Position cursor at the end
                         const textLength = textarea.value.length;
                         textarea.setSelectionRange(textLength, textLength);
                       }
