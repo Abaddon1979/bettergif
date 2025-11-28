@@ -241,8 +241,7 @@ export default {
 
           if (urls[0] && value.includes(urls[0]) && inputEl.dataset.chatgifHiddenUrl !== urls[0]) {
             inputEl.dataset.chatgifHiddenUrl = urls[0];
-            // Remove URL and invisible characters
-            let textOnly = value.replace(urls[0], "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
+            let textOnly = value.replace(urls[0], "").replace(/\s{2,}/g, " ").trim();
 
             if (textOnly && !textOnly.endsWith("\n")) {
               textOnly = textOnly + "\n";
@@ -561,9 +560,8 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Put the GIF URL with an invisible character to pass validation
-                          // The invisible character (U+200E Left-to-Right Mark) ensures non-blank content
-                          textarea.value = gifUrl + "\u200E";
+                          // Use a single space to pass validation (URL will be sent from dataset)
+                          textarea.value = " ";
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -757,7 +755,8 @@ export default {
                               chatTextarea.value = currentValue + "\n";
                             }
                           } else {
-                            chatTextarea.value = gifUrl + "\u200E";
+                            // Use a single space to pass validation (URL will be sent from dataset)
+                            chatTextarea.value = " ";
                           }
 
                           chatTextarea.dispatchEvent(new Event("input", { bubbles: true }));
