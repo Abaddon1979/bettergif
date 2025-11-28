@@ -282,7 +282,8 @@ export default {
           const foundUrls = (current.match(urlRegex) || []).filter(isImageUrl);
           const all = Array.from(new Set([...(hidden ? [hidden] : []), ...foundUrls]));
 
-          let textOnly = current.replace(urlRegex, "").replace(/\s{2,}/g, " ").trim();
+          // Remove URLs and invisible characters before checking if there's actual text
+          let textOnly = current.replace(urlRegex, "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
 
           const parts = [];
           if (textOnly) parts.push(textOnly);
