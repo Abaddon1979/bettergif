@@ -409,14 +409,33 @@ export default {
         if (sendBtn && !sendBtn.dataset.chatgifHooked) {
           sendBtn.dataset.chatgifHooked = "true";
           sendBtn.addEventListener("click", (e) => {
-            // If we have a hidden URL, intercept and handle the send ourselves
-            if (inputEl.dataset.chatgifHiddenUrl) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              appendHiddenUrlBeforeSend({ triggerSendClick: true });
+            // If we have a hidden URL, set the value immediately before Discourse processes
+            const hidden = inputEl.dataset.chatgifHiddenUrl;
+            if (hidden) {
+              const urlRegex = /(https?:\/\/[^\s]+)/g;
+              const isImageUrl = (u) => /\.(gif|png|jpe?g|webp)(\?.*)?$/i.test(u);
+
+              const current = inputEl.value || "";
+              const foundUrls = (current.match(urlRegex) || []).filter(isImageUrl);
+              const all = Array.from(new Set([...(hidden ? [hidden] : []), ...foundUrls]));
+
+              // Remove URLs and invisible characters
+              let textOnly = current.replace(urlRegex, "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
+
+              const parts = [];
+              if (textOnly) parts.push(textOnly);
+              all.forEach(url => parts.push(url));
+              const combinedValue = parts.join("\n");
+
+              // Set the value synchronously so Discourse's send handler sees it
+              inputEl.value = combinedValue;
+
+              // Clear the dataset so we don't process again
+              delete inputEl.dataset.chatgifHiddenUrl;
+
+              // Let the click proceed normally - Discourse will send the message
             }
-          }, { capture: true }); // Capture phase - runs before Discourse's handler
+          }, { capture: true });
         }
 
         updatePreview();
