@@ -570,8 +570,8 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Use space + invisible character to pass validation
-                          textarea.value = " \u200E";
+                          // Leave empty - URL is stored in dataset only
+                          textarea.value = "";
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -765,8 +765,8 @@ export default {
                               chatTextarea.value = currentValue + "\n";
                             }
                           } else {
-                            // Use space + invisible character to pass validation
-                            chatTextarea.value = " \u200E";
+                            // Leave empty - URL is stored in dataset only
+                            chatTextarea.value = "";
                           }
 
                           chatTextarea.dispatchEvent(new Event("input", { bubbles: true }));
