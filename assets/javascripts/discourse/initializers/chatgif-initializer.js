@@ -264,6 +264,13 @@ export default {
           });
           preview.appendChild(img);
           preview.style.display = "block";
+
+          // Enable send button when preview is shown
+          const sendBtn = container.closest(".chat-composer__inner-container")?.querySelector(".chat-composer-button.-send");
+          if (sendBtn) {
+            sendBtn.removeAttribute("disabled");
+            sendBtn.setAttribute("tabindex", "0");
+          }
         };
 
         inputEl.addEventListener("input", updatePreview);
@@ -408,32 +415,20 @@ export default {
         const sendBtn = composerRoot?.querySelector(".chat-composer-button.-send");
         if (sendBtn && !sendBtn.dataset.chatgifHooked) {
           sendBtn.dataset.chatgifHooked = "true";
+
+          // Enable send button when we have a GIF (override Discourse's disabled state)
+          if (inputEl.dataset.chatgifHiddenUrl) {
+            sendBtn.removeAttribute("disabled");
+            sendBtn.setAttribute("tabindex", "0");
+          }
+
           sendBtn.addEventListener("click", (e) => {
-            // If we have a hidden URL, set the value immediately before Discourse processes
-            const hidden = inputEl.dataset.chatgifHiddenUrl;
-            if (hidden) {
-              const urlRegex = /(https?:\/\/[^\s]+)/g;
-              const isImageUrl = (u) => /\.(gif|png|jpe?g|webp)(\?.*)?$/i.test(u);
-
-              const current = inputEl.value || "";
-              const foundUrls = (current.match(urlRegex) || []).filter(isImageUrl);
-              const all = Array.from(new Set([...(hidden ? [hidden] : []), ...foundUrls]));
-
-              // Remove URLs and invisible characters
-              let textOnly = current.replace(urlRegex, "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
-
-              const parts = [];
-              if (textOnly) parts.push(textOnly);
-              all.forEach(url => parts.push(url));
-              const combinedValue = parts.join("\n");
-
-              // Set the value synchronously so Discourse's send handler sees it
-              inputEl.value = combinedValue;
-
-              // Clear the dataset so we don't process again
-              delete inputEl.dataset.chatgifHiddenUrl;
-
-              // Let the click proceed normally - Discourse will send the message
+            // If we have a hidden URL, use the same logic as Enter key
+            if (inputEl.dataset.chatgifHiddenUrl) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              appendHiddenUrlBeforeSend({ triggerSendClick: true });
             }
           }, { capture: true });
         }
