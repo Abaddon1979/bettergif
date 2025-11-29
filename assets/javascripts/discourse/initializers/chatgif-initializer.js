@@ -235,6 +235,7 @@ export default {
             preview.style.display = "none";
             container.classList.remove("chatgif-has-preview");
             container.style.removeProperty("--chatgif-preview-h");
+            inputEl.style.color = ""; // Restore text color for normal typing
             return;
           }
           const u = candidate;
@@ -255,19 +256,23 @@ export default {
             */
           }
 
+          // Create preview that looks like it's inside textarea (rich text effect)
           const img = document.createElement("img");
           img.src = u;
-          img.alt = "preview";
+          img.alt = "GIF";
           img.loading = "lazy";
           img.style.maxHeight = "120px";
           img.style.width = "auto";
           img.style.maxWidth = "100%";
-          img.addEventListener("load", () => {
-          });
+          img.style.display = "block";
+          img.style.margin = "4px 0";
           preview.appendChild(img);
           preview.style.display = "block";
 
-          // Enable send button when preview is shown
+          // Hide the URL text in textarea by making it transparent
+          inputEl.style.color = "transparent";
+
+          // Enable send button when we have a GIF URL
           const sendBtn = container.closest(".chat-composer__inner-container")?.querySelector(".chat-composer-button.-send");
           if (sendBtn) {
             sendBtn.removeAttribute("disabled");
@@ -467,10 +472,11 @@ export default {
               // Clear dataset
               delete inputEl.dataset.chatgifHiddenUrl;
 
-              // Clear preview immediately
+              // Clear preview and restore text color
               preview.style.display = "none";
               preview.innerHTML = "";
               container.classList.remove("chatgif-has-preview");
+              inputEl.style.color = "";
 
               // Let the click proceed - Discourse will send the message
             }
@@ -497,10 +503,11 @@ export default {
               inputEl.dispatchEvent(new Event("input", { bubbles: true }));
               delete inputEl.dataset.chatgifHiddenUrl;
 
-              // Clear preview immediately
+              // Clear preview and restore text color
               preview.style.display = "none";
               preview.innerHTML = "";
               container.classList.remove("chatgif-has-preview");
+              inputEl.style.color = "";
             }
           }, { capture: true });
         }
