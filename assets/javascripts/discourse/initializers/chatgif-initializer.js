@@ -676,11 +676,25 @@ export default {
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
-                        textarea.focus();
 
-                        // Position cursor at the end
-                        const textLength = textarea.value.length;
-                        textarea.setSelectionRange(textLength, textLength);
+                        // Detect if we're on mobile
+                        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                          || window.innerWidth < 768;
+
+                        if (isMobile) {
+                          // On mobile: auto-send immediately
+                          setTimeout(() => {
+                            const sendBtn = document.querySelector(".chat-composer-button.-send");
+                            if (sendBtn) {
+                              sendBtn.click();
+                            }
+                          }, 100);
+                        } else {
+                          // On desktop: just focus for user to review/edit
+                          textarea.focus();
+                          const textLength = textarea.value.length;
+                          textarea.setSelectionRange(textLength, textLength);
+                        }
                       }
                       gifPicker.style.display = "none";
                       backdrop.classList.remove("visible");
