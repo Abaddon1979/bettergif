@@ -652,8 +652,8 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Leave empty - URL is stored in dataset only
-                          textarea.value = "";
+                          // Put GIF URL in textarea so it's there when send is pressed (especially on mobile)
+                          textarea.value = gifUrl;
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -847,8 +847,8 @@ export default {
                               chatTextarea.value = currentValue + "\n";
                             }
                           } else {
-                            // Leave empty - URL is stored in dataset only
-                            chatTextarea.value = "";
+                            // Put GIF URL in textarea so it's there when send is pressed (especially on mobile)
+                            chatTextarea.value = gifUrl;
                           }
 
                           chatTextarea.dispatchEvent(new Event("input", { bubbles: true }));
