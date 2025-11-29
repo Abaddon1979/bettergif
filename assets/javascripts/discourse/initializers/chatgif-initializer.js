@@ -276,6 +276,21 @@ export default {
         inputEl.addEventListener("input", updatePreview);
         inputEl.addEventListener("paste", () => setTimeout(updatePreview, 0));
 
+        // Monitor send button and re-enable it if needed (for mobile where Discourse keeps re-disabling)
+        const ensureSendBtnEnabled = () => {
+          if (inputEl.dataset.chatgifHiddenUrl) {
+            const sendBtn = container.closest(".chat-composer__inner-container")?.querySelector(".chat-composer-button.-send");
+            if (sendBtn && sendBtn.hasAttribute("disabled")) {
+              sendBtn.removeAttribute("disabled");
+              sendBtn.setAttribute("tabindex", "0");
+            }
+          }
+        };
+
+        // Check periodically on mobile
+        setInterval(ensureSendBtnEnabled, 100);
+
+
         const appendHiddenUrlBeforeSend = (opts = {}) => {
           const { triggerSendClick = false, triggerKeyEnter = false } = opts;
           if (inputEl.dataset.chatgifSendingNow === "1") return;
