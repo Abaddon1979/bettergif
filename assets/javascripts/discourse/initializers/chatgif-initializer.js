@@ -241,6 +241,7 @@ export default {
 
           if (urls[0] && value.includes(urls[0]) && inputEl.dataset.chatgifHiddenUrl !== urls[0]) {
             inputEl.dataset.chatgifHiddenUrl = urls[0];
+            /* Don't hide URL - let it stay in textarea so user can backspace to delete
             // Remove URL and invisible characters
             let textOnly = value.replace(urls[0], "").replace(/\u200E/g, "").replace(/\s{2,}/g, " ").trim();
 
@@ -251,6 +252,7 @@ export default {
               textOnly = " \u200E";
             }
             inputEl.value = textOnly;
+            */
           }
 
           const img = document.createElement("img");
@@ -662,8 +664,8 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Keep empty - preview image shows visually, URL is in dataset
-                          textarea.value = "";
+                          // Put GIF URL in textarea - preview will visually replace it but URL stays deletable
+                          textarea.value = gifUrl;
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
