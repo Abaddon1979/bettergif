@@ -465,6 +465,11 @@ export default {
               // Clear dataset
               delete inputEl.dataset.chatgifHiddenUrl;
 
+              // Clear preview immediately
+              preview.style.display = "none";
+              preview.innerHTML = "";
+              container.classList.remove("chatgif-has-preview");
+
               // Let the click proceed - Discourse will send the message
             }
           }, { capture: true });
@@ -489,6 +494,11 @@ export default {
               inputEl.value = parts.join("\n");
               inputEl.dispatchEvent(new Event("input", { bubbles: true }));
               delete inputEl.dataset.chatgifHiddenUrl;
+
+              // Clear preview immediately
+              preview.style.display = "none";
+              preview.innerHTML = "";
+              container.classList.remove("chatgif-has-preview");
             }
           }, { capture: true });
         }
@@ -652,8 +662,8 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Put GIF URL in textarea so it's there when send is pressed (especially on mobile)
-                          textarea.value = gifUrl;
+                          // Keep empty - preview image shows visually, URL is in dataset
+                          textarea.value = "";
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
