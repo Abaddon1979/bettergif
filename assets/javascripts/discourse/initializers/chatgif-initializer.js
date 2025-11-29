@@ -215,6 +215,13 @@ export default {
         const isImageUrl = (u) => /\.(gif|png|jpe?g|webp)(\?.*)?$/i.test(u);
 
         const updatePreview = () => {
+          // Skip preview on mobile (GIF auto-posts anyway)
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+            || window.innerWidth < 768;
+          if (isMobile) {
+            return; // No preview needed on mobile
+          }
+
           let value = inputEl.value || "";
 
           const mdMatch = value.match(/!\[[^\]]*\]\((https?:\/\/[^\s)]+)\)/);
