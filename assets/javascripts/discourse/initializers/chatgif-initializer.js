@@ -678,8 +678,17 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Use invisible character (URL hidden in dataset, preview shows)
-                          textarea.value = " \u200E";
+                          // Detect mobile
+                          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                            || window.innerWidth < 768;
+
+                          if (isMobile) {
+                            // Mobile: Put URL (will auto-post)
+                            textarea.value = gifUrl;
+                          } else {
+                            // Desktop: Use invisible character (preview shows)
+                            textarea.value = " \u200E";
+                          }
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -887,8 +896,17 @@ export default {
                               chatTextarea.value = currentValue + "\n";
                             }
                           } else {
-                            // Use invisible character (URL hidden in dataset, preview shows)
-                            chatTextarea.value = " \u200E";
+                            // Detect mobile
+                            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                              || window.innerWidth < 768;
+
+                            if (isMobile) {
+                              // Mobile: Put URL (will auto-post)
+                              chatTextarea.value = gifUrl;
+                            } else {
+                              // Desktop: Use invisible character (preview shows)
+                              chatTextarea.value = " \u200E";
+                            }
                           }
 
                           chatTextarea.dispatchEvent(new Event("input", { bubbles: true }));
