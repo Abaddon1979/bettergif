@@ -678,8 +678,8 @@ export default {
                             textarea.value = currentValue + "\n";
                           }
                         } else {
-                          // Put GIF URL in textarea - preview will visually replace it but URL stays deletable
-                          textarea.value = gifUrl;
+                          // Use invisible character (URL hidden in dataset, preview shows)
+                          textarea.value = " \u200E";
                         }
 
                         textarea.dispatchEvent(new Event("input", { bubbles: true }));
@@ -887,8 +887,8 @@ export default {
                               chatTextarea.value = currentValue + "\n";
                             }
                           } else {
-                            // Put GIF URL in textarea so it's there when send is pressed (especially on mobile)
-                            chatTextarea.value = gifUrl;
+                            // Use invisible character (URL hidden in dataset, preview shows)
+                            chatTextarea.value = " \u200E";
                           }
 
                           chatTextarea.dispatchEvent(new Event("input", { bubbles: true }));
