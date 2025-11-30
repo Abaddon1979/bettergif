@@ -686,8 +686,8 @@ export default {
                             // Mobile: Put URL (will auto-post)
                             textarea.value = gifUrl;
                           } else {
-                            // Desktop: Use invisible character (preview shows)
-                            textarea.value = " \u200E";
+                            // Desktop: keep composer visually empty; preview will show GIF
+                            textarea.value = "";
                           }
                         }
 
@@ -904,8 +904,8 @@ export default {
                               // Mobile: Put URL (will auto-post)
                               chatTextarea.value = gifUrl;
                             } else {
-                              // Desktop: Use invisible character (preview shows)
-                              chatTextarea.value = " \u200E";
+                              // Desktop: keep composer visually empty; preview will show GIF
+                              chatTextarea.value = "";
                             }
                           }
 
