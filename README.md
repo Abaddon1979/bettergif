@@ -1,78 +1,69 @@
-# ChatGIF Discourse Plugin
+# ChatGIF / BetterGIF Discourse Plugin
 
-A GIF picker plugin for Discourse chat that integrates with the Tenor API to allow users to search and insert GIFs directly into the chat composer.
+A GIF picker for Discourse chat and the forum composer, powered by the [KLIPY](https://klipy.com) API. Requests are proxied through the Discourse backend so your API key stays private and each logged-in user gets a stable hashed `customer_id` for personalization and ad monetization.
 
 ## Features
 
-- Adds a GIF button to the Discourse chat composer
-- Search for GIFs using the Tenor API
-- Insert GIF URLs directly into the message input
-- Responsive design that works on desktop and mobile
-- Clean, Discourse-native styling
+- GIF button in chat composer and forum toolbar
+- Trending GIFs on open, search as you type
+- Optional KLIPY ads in results (`type: "ad"`) when ads are enabled on your API key
+- Per-user `customer_id` (SHA-256 of Discourse user id + site secret)
+- Share tracking when a GIF is inserted
+- Chat inline preview + duplicate onebox cleanup
 
 ## Installation
 
-1. Add this plugin to your Discourse plugins directory
-2. Restart your Discourse instance
-3. Enable the plugin in the admin settings
-4. Configure your Tenor API key
+1. Clone or copy this plugin into your Discourse `plugins/` directory
+2. Rebuild / restart Discourse
+3. Enable the plugin
+4. Set **KLIPY API key** under Admin → Settings → Plugins
+
+Get a key at [partner.klipy.com](https://partner.klipy.com). Enable ads on the key in the KLIPY dashboard when you are ready to monetize.
 
 ## Configuration
 
-### Tenor API Key
+| Setting | Purpose |
+| --- | --- |
+| `chatgif_enabled` | Turn the picker on/off |
+| `chatgif_klipy_api_key` | KLIPY app key (secret, server-side only) |
+| `chatgif_klipy_locale` | Locale for trending/search (e.g. `en_US`) |
+| `chatgif_klipy_content_filter` | `off` / `low` / `medium` / `high` |
+| `chatgif_klipy_ad_min_width` / `_max_width` / `_min_height` / `_max_height` | Ad slot sizes sent to KLIPY |
 
-To use this plugin, you need a Tenor API key:
+## How monetization works
 
-1. Go to [Tenor Developer Portal](https://tenor.com/developer/dashboard)
-2. Create a new application
-3. Get your API key
-4. Add the API key in Discourse admin settings under:
-   - **Settings** → **Plugins** → **ChatGIF** → **Tenor API Key**
+Discourse core's built-in GIF picker talks to KLIPY but does **not** send `customer_id`. This plugin does not patch core. Instead it proxies:
+
+- `GET /chatgif/trending`
+- `GET /chatgif/search?q=...`
+- `GET /chatgif/recent`
+- `POST /chatgif/share`
+
+Each request includes a hashed `customer_id` like `usr_<16 hex chars>` plus the recommended ad size params. When ads are enabled for your KLIPY key, responses may include objects with `"type":"ad"`; the picker renders those as sandboxed iframes.
 
 ## Usage
 
-1. Open any Discourse chat
-2. Click the GIF button (film icon) in the chat composer
-3. Search for GIFs using the search box
-4. Click any GIF to insert its URL into the message input
-5. Send your message as usual
+1. Open chat or the post composer
+2. Click the film / Insert GIF button
+3. Browse trending or search
+4. Click a GIF to insert it (ads are display-only)
 
-## File Structure
+## File structure
 
 ```
-chatgif/
-├── plugin.rb                                      # Main plugin file
+bettergif/
+├── plugin.rb
 ├── assets/
-│   ├── javascripts/
-│   │   └── discourse/
-│   │       └── initializers/
-│   │           └── chatgif-initializer.js        # Frontend JavaScript
-│   └── stylesheets/
-│       └── chatgif.scss                          # Styling
+│   ├── javascripts/discourse/initializers/chatgif-initializer.js
+│   └── stylesheets/chatgif.scss
 ├── config/
-│   ├── settings.yml                              # Plugin settings
+│   ├── settings.yml
 │   └── locales/
-│       └── client.en.yml                         # English translations
-└── README.md                                      # This file
+│       ├── client.en.yml
+│       └── server.en.yml
+└── README.md
 ```
-
-## API Endpoints
-
-- `GET /chatgif/search?q=query&limit=10` - Search for GIFs
-
-## Browser Support
-
-- Modern browsers with ES6+ support
-- Mobile browsers (iOS Safari, Chrome Mobile)
-- Desktop browsers (Chrome, Firefox, Safari, Edge)
 
 ## License
 
 MIT License
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request

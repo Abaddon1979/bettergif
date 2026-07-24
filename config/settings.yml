@@ -1,7 +1,36 @@
 plugins:
-  chatgif_tenor_api_key:
-    default: ""
-    client: true
   chatgif_enabled:
     default: true
+    client: true
+  chatgif_klipy_api_key:
+    default: ""
+    secret: true
     client: false
+  chatgif_klipy_locale:
+    default: "en_US"
+    client: false
+  chatgif_klipy_content_filter:
+    default: "high"
+    client: false
+    type: enum
+    choices:
+      - off
+      - low
+      - medium
+      - high
+  chatgif_klipy_ad_min_width:
+    default: 50
+    client: false
+    min: 50
+  chatgif_klipy_ad_max_width:
+    default: 401
+    client: false
+    min: 50
+  chatgif_klipy_ad_min_height:
+    default: 50
+    client: false
+    min: 50
+  chatgif_klipy_ad_max_height:
+    default: 250
+    client: false
+    min: 50

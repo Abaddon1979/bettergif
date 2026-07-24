@@ -1,0 +1,10 @@
+en:
+  site_settings:
+    chatgif_enabled: "Enable the ChatGIF / BetterGIF picker"
+    chatgif_klipy_api_key: "KLIPY API key (from partner.klipy.com). Kept server-side for monetization."
+    chatgif_klipy_locale: "KLIPY locale (e.g. en_US) for localized trending and search"
+    chatgif_klipy_content_filter: "KLIPY content safety filter"
+    chatgif_klipy_ad_min_width: "Minimum ad width in pixels (KLIPY recommends 50)"
+    chatgif_klipy_ad_max_width: "Maximum ad width in pixels (KLIPY recommends ~device width)"
+    chatgif_klipy_ad_min_height: "Minimum ad height in pixels (KLIPY recommends 50)"
+    chatgif_klipy_ad_max_height: "Maximum ad height in pixels (KLIPY recommends 250)"

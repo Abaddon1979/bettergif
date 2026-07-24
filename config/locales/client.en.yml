@@ -2,3 +2,10 @@ en:
   js:
     chatgif:
       insert: "Insert GIF"
+      powered_by: "Powered by KLIPY"
+      search_placeholder: "Search KLIPY"
+      no_results: "No GIFs found"
+      loading: "Loading..."
+      error_no_key: "KLIPY API key not configured. Set chatgif_klipy_api_key in Admin → Settings → Plugins."
+      error_load: "Failed to load GIFs"
+      ad_label: "Ad"
